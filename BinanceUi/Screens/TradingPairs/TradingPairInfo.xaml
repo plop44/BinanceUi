@@ -1,0 +1,48 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:binanceUi="clr-namespace:BinanceUi"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:tradingPairs="clr-namespace:BinanceUi.Screens.TradingPairs"
+                    xmlns:behaviors="clr-namespace:BinanceUi.Behaviors">
+
+
+    <DataTemplate x:Key="TradingInfoViewModel.TabHeader" DataType="{x:Type tradingPairs:TradingInfoViewModel}">
+        <TextBlock Text="Pair info" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="TradingInfoViewModel.TabContent" DataType="{x:Type tradingPairs:TradingInfoViewModel}"
+                  x:Shared="False">
+        <!--x:Shared="False" is important otherwise we will have same controls as it would cache-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10">
+                <TextBlock Text="Search: " Margin="4" />
+                <TextBox x:Name="SearchTextBox" MinWidth="50" VerticalContentAlignment="Center" />
+            </StackPanel>
+
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding ElementName=SearchTradeInfoBehavior, Path=FilteredItemsSource}">
+                <DataGrid.ContextMenu>
+                    <ContextMenu 
+                        ContextMenuService.PlacementTarget="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}"
+                        x:Name="TradingPairContextMenu">
+                        <MenuItem Header="Go to price ticker..." 
+                                  Command="{Binding PlacementTarget.DataContext.OpenPriceTicker, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                  CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                        <!--PlacementTarget point to the DataGrid-->
+					</ContextMenu>
+                </DataGrid.ContextMenu>
+                <b:Interaction.Behaviors>
+                    <behaviors:SearchTextBehavior x:Name="SearchTradeInfoBehavior"
+                                                       ItemsSource="{Binding Items}"
+                                                       SearchedText="{Binding ElementName=SearchTextBox, Path=Text, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                </b:Interaction.Behaviors>
+            </DataGrid>
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

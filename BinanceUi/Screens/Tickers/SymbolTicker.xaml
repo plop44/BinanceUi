@@ -1,0 +1,125 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:tickers="clr-namespace:BinanceUi.Screens.Tickers"
+                    xmlns:behaviors="clr-namespace:BinanceUi.Behaviors"
+                    xmlns:converters="clr-namespace:BinanceUi.Converters">
+
+
+    <DataTemplate x:Key="SymbolTickersViewModel.TabHeader" DataType="{x:Type tickers:SymbolTickersViewModel}">
+        <TextBlock Text="Tickers" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="SymbolTickersViewModel.TabContent" DataType="{x:Type tickers:SymbolTickersViewModel}"
+                  x:Shared="False">
+        <!--x:Shared="False" is important otherwise we will have same controls as it would cache-->
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="FrameworkElement.Margin" Value="2" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <b:Interaction.Behaviors>
+					<behaviors:CloseItemOnMiddleClickBehavior />
+                </b:Interaction.Behaviors>
+            </ItemsControl>
+        </ScrollViewer>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tickers:SymbolTickerViewModel}">
+        <DataTemplate.Resources>
+            <converters:NullToMessageConverter NullValue="X" x:Key="NullToMessageConverter" />
+
+            <Style x:Key="TextBlock.DisplayLabel" TargetType="{x:Type TextBlock}">
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="Foreground" Value="{StaticResource Brush.Grey}" />
+            </Style>
+            <Style x:Key="TextBlock.DisplayValue" TargetType="{x:Type TextBlock}">
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="Foreground" Value="{StaticResource Brush.White}" />
+                <Setter Property="Margin" Value="5,0,0,0" />
+            </Style>
+
+            <Style x:Key="Arrow" TargetType="{x:Type Path}">
+                <Setter Property="Data" Value="M 0 5 L 5 0 L 10 5 Z" />
+                <Setter Property="Width" Value="10" />
+                <Setter Property="Height" Value="5" />
+                <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            </Style>
+
+            <Style x:Key="Arrow.Up" TargetType="{x:Type Path}" BasedOn="{StaticResource Arrow}">
+                <Setter Property="Fill" Value="#00AA00" />
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="2" ScaleY="2" />
+                            <RotateTransform Angle="0" />
+                        </TransformGroup>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="Arrow.Down" TargetType="{x:Type Path}" BasedOn="{StaticResource Arrow}">
+                <Setter Property="Fill" Value="Red" />
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="2" ScaleY="2" />
+                            <RotateTransform Angle="180" />
+                        </TransformGroup>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </DataTemplate.Resources>
+        <Border BorderThickness="2" CornerRadius="3" BorderBrush="{StaticResource Brush.Black}" Background="#2A2A2A"
+                Width="220"
+                Height="150">
+            <UniformGrid Rows="3" VerticalAlignment="Center">
+                <TextBlock Text="{Binding DisplaySymbol}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontSize="18" FontWeight="Bold" Foreground="{StaticResource Brush.White}" />
+
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="LAST"
+                               Style="{StaticResource TextBlock.DisplayLabel}" />
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                               Text="{Binding LastPrice, StringFormat={StaticResource PriceFormat}, Converter={StaticResource NullToMessageConverter}}"
+                               Style="{StaticResource TextBlock.DisplayValue}" />
+
+                    <Path Grid.Row="0" Grid.Column="2" Style="{StaticResource Arrow.Down}"
+                          Visibility="{Binding IsUp, Converter={StaticResource BooleanToVisibilityConverter.Inverse}}" />
+                    <Path Grid.Row="0" Grid.Column="2" Style="{StaticResource Arrow.Up}"
+                          Visibility="{Binding IsUp, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="QTY"
+                               Style="{StaticResource TextBlock.DisplayLabel}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1"
+                               Text="{Binding Quantity, StringFormat={StaticResource PriceFormat}, Converter={StaticResource NullToMessageConverter}}"
+                               Style="{StaticResource TextBlock.DisplayValue}" />
+                </Grid>
+
+            </UniformGrid>
+        </Border>
+    </DataTemplate>
+
+</ResourceDictionary>
