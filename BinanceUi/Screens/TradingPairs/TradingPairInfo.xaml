@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:binanceUi="clr-namespace:BinanceUi"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:tradingPairs="clr-namespace:BinanceUi.Screens.TradingPairs"
                     xmlns:behaviors="clr-namespace:BinanceUi.Behaviors">
@@ -25,7 +24,8 @@
             </StackPanel>
 
             <DataGrid Grid.Row="1"
-                      ItemsSource="{Binding ElementName=SearchTradeInfoBehavior, Path=FilteredItemsSource}">
+                      ItemsSource="{Binding ElementName=SearchTradeInfoBehavior, Path=FilteredItemsSource}"
+                      AutomationProperties.AutomationId="TradingPairInfo.DataGrid">
                 <DataGrid.ContextMenu>
                     <ContextMenu 
                         ContextMenuService.PlacementTarget="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}"

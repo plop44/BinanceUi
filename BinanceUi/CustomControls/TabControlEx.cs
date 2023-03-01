@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Collections.Generic;
 
 #nullable disable
 
@@ -14,7 +16,7 @@ namespace BinanceUi.CustomControls;
 [TemplatePart(Name = "PART_ItemsHolder", Type = typeof(Panel))]
 public class TabControlEx : TabControl
 {
-    private Panel _itemsHolderPanel;
+    public Panel ItemsHolderPanel { get; private set; }
 
     public TabControlEx()
     {
@@ -42,7 +44,7 @@ public class TabControlEx : TabControl
     public override void OnApplyTemplate()
     {
         base.OnApplyTemplate();
-        _itemsHolderPanel = GetTemplateChild("PART_ItemsHolder") as Panel;
+        ItemsHolderPanel = GetTemplateChild("PART_ItemsHolder") as Panel;
         UpdateSelectedItem();
     }
 
@@ -54,13 +56,13 @@ public class TabControlEx : TabControl
     {
         base.OnItemsChanged(e);
 
-        if (_itemsHolderPanel == null)
+        if (ItemsHolderPanel == null)
             return;
 
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Reset:
-                _itemsHolderPanel.Children.Clear();
+                ItemsHolderPanel.Children.Clear();
                 break;
 
             case NotifyCollectionChangedAction.Add:
@@ -70,7 +72,7 @@ public class TabControlEx : TabControl
                     {
                         var cp = FindChildContentPresenter(item);
                         if (cp != null)
-                            _itemsHolderPanel.Children.Remove(cp);
+                            ItemsHolderPanel.Children.Remove(cp);
                     }
 
                 // Don't do anything with new items because we don't want to
@@ -92,7 +94,7 @@ public class TabControlEx : TabControl
 
     private void UpdateSelectedItem()
     {
-        if (_itemsHolderPanel == null)
+        if (ItemsHolderPanel == null)
             return;
 
         // Generate a ContentPresenter if necessary
@@ -101,7 +103,7 @@ public class TabControlEx : TabControl
             CreateChildContentPresenter(item);
 
         // show the right child
-        foreach (ContentPresenter child in _itemsHolderPanel.Children)
+        foreach (ContentPresenter child in ItemsHolderPanel.Children)
             child.Visibility = (child.Tag as TabItem).IsSelected ? Visibility.Visible : Visibility.Collapsed;
     }
 
@@ -116,14 +118,16 @@ public class TabControlEx : TabControl
             return cp;
 
         // the actual child to be added.  cp.Tag is a reference to the TabItem
-        cp = new ContentPresenter();
-        cp.Content = item is TabItem ? (item as TabItem).Content : item;
-        cp.ContentTemplate = SelectedContentTemplate;
-        cp.ContentTemplateSelector = SelectedContentTemplateSelector;
-        cp.ContentStringFormat = SelectedContentStringFormat;
-        cp.Visibility = Visibility.Collapsed;
-        cp.Tag = item is TabItem ? item : ItemContainerGenerator.ContainerFromItem(item);
-        _itemsHolderPanel.Children.Add(cp);
+        cp = new ContentPresenter
+        {
+            Content = item is TabItem ? (item as TabItem).Content : item,
+            ContentTemplate = SelectedContentTemplate,
+            ContentTemplateSelector = SelectedContentTemplateSelector,
+            ContentStringFormat = SelectedContentStringFormat,
+            Visibility = Visibility.Collapsed,
+            Tag = item is TabItem ? item : ItemContainerGenerator.ContainerFromItem(item),
+        };
+        ItemsHolderPanel.Children.Add(cp);
         return cp;
     }
 
@@ -135,10 +139,10 @@ public class TabControlEx : TabControl
         if (data == null)
             return null;
 
-        if (_itemsHolderPanel == null)
+        if (ItemsHolderPanel == null)
             return null;
 
-        foreach (ContentPresenter cp in _itemsHolderPanel.Children)
+        foreach (ContentPresenter cp in ItemsHolderPanel.Children)
             if (cp.Content == data)
                 return cp;
 
@@ -152,5 +156,54 @@ public class TabControlEx : TabControl
             return null;
 
         return selectedItem as TabItem ?? ItemContainerGenerator.ContainerFromIndex(SelectedIndex) as TabItem;
+    } 
+    
+    // following code has been added by me
+    protected override AutomationPeer OnCreateAutomationPeer()
+    {
+        return new CustomTabControlAutomationPeer(this);
+    }
+}
+
+public class CustomTabItemAutomationPeer : TabItemAutomationPeer
+{
+    public CustomTabItemAutomationPeer(object owner, CustomTabControlAutomationPeer tabControlAutomationPeer) 
+        : base(owner, tabControlAutomationPeer)
+    {
+    }
+    
+    protected override List<AutomationPeer> GetChildrenCore()
+    {
+        var headerChildren = base.GetChildrenCore();
+
+        if (ItemsControlAutomationPeer.Owner is TabControlEx parentTabControl)
+        {
+            var contentHost = parentTabControl.ItemsHolderPanel;
+            if (contentHost != null)
+            {
+                AutomationPeer contentHostPeer = new FrameworkElementAutomationPeer(contentHost);
+                var contentChildren = contentHostPeer.GetChildren();
+                if (contentChildren != null)
+                {
+                    if (headerChildren == null)
+                        headerChildren = contentChildren;
+                    else
+                        headerChildren.AddRange(contentChildren);
+                }
+            }
+        }
+
+
+        return headerChildren;
+    }
+}
+public class CustomTabControlAutomationPeer : TabControlAutomationPeer
+{
+    public CustomTabControlAutomationPeer(TabControlEx owner) : base(owner)
+    {
+    }
+    protected override ItemAutomationPeer CreateItemAutomationPeer(object item)
+    {
+        return new CustomTabItemAutomationPeer(item, this);
     }
 }

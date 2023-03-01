@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:binanceUi="clr-namespace:BinanceUi"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:screens="clr-namespace:BinanceUi.Screens"
         xmlns:behaviors="clr-namespace:BinanceUi.Behaviors"
@@ -32,7 +31,8 @@
                     <Setter Property="Cursor" Value="Hand" />
                 </Style>
             </StackPanel.Resources>
-            <Button Content="+ Trading info" Command="{Binding AddTradingPairInfo}" />
+            <Button Content="+ Trading info" Command="{Binding AddTradingPairInfo}"
+                    AutomationProperties.AutomationId="OpenTradingInfoButton"/>
         </StackPanel>
 
 		<customControls:TabControlEx Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
