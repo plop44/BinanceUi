@@ -1,13 +1,28 @@
-﻿App used to showcase a few WPF concepts:
-- Automated UI test using Microsoft.Automation
+﻿# BinanceUi
+
+This app demonstrates a few WPF concepts, including:
+
+- Automated UI testing using Microsoft.Automation
 - MVVM with ViewModel first approach (DataTemplate)
 - WPF Behaviors
-- WPF Converters
-- WPF change mechanism wired up in Rx
-etc.
+- use of ReactiveExtensions (Rx) in WPF
 
-The appearance of the rendering is not very nice, as only native WPF controls were utilized and not much time was spent on restyling them. 
-In a production application, it would be more likely to use a third-party control library like DevExpress or Telerik, which comes with styling themes. 
-Deeply styling controls is not a common task.
+![Binance UI render](https://raw.githubusercontent.com/plop44/BinanceUi/main/BinanceUi.png)
 
-![Binance UI render](https://raw.githubusercontent.com/plop44/BinanceUi/main/BincaneUi.png)
+## Automated UI Testing
+
+The app includes automated UI tests using Microsoft.Automation. These tests ensure that the app functions as expected and that changes don't introduce bugs.
+
+## MVVM with ViewModel First Approach
+
+We use the MVVM design pattern with a ViewModel first approach, using DataTemplates to bind the View to the ViewModel.
+
+## WPF Behaviors
+
+We leverage WPF Behaviors to add interactivity to the UI without writing code-behind.
+
+## Use of ReactiveExtensions in WPF
+
+We use Rx to wire up the change mechanism in WPF, allowing us to respond to changes in the UI in a reactive way.
+
+**Note:** The appearance of the UI is not the focus of this app, and we have not spent much time restyling the native WPF controls. In a production app, we would likely use a third-party control library with styling themes.
