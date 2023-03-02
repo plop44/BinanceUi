@@ -1,7 +1,8 @@
 ﻿App used to showcase a few WPF concepts:
-- ViewModel first approach (DataTemplate)
-- Behaviors
-- Converters
+- Automated UI test using Microsoft.Automation
+- MVVM with ViewModel first approach (DataTemplate)
+- WPF Behaviors
+- WPF Converters
 - WPF change mechanism wired up in Rx
 etc.
 

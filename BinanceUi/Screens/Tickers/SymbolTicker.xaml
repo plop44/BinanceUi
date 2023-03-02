@@ -87,8 +87,8 @@
                 Height="150">
             <UniformGrid Rows="3" VerticalAlignment="Center">
                 <TextBlock Text="{Binding DisplaySymbol}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontSize="18" FontWeight="Bold" Foreground="{StaticResource Brush.White}" />
-
+                           FontSize="18" FontWeight="Bold" Foreground="{StaticResource Brush.White}"
+                           AutomationProperties.AutomationId="Ticker.Symbol"/>
                 <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
