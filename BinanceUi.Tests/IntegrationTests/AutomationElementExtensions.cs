@@ -59,12 +59,8 @@ public static class AutomationElementExtensions
 
     public static void OpenContextMenu(this AutomationElement automationElement)
     {
-        var cursorPosition = MouseOperations.GetCursorPosition();
-
         var clickablePoint = automationElement.GetClickablePoint();
         MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.RightDown, clickablePoint);
         MouseOperations.MouseEvent(MouseOperations.MouseEventFlags.RightUp, clickablePoint);
-
-        MouseOperations.SetCursorPosition(cursorPosition);
     }
 }

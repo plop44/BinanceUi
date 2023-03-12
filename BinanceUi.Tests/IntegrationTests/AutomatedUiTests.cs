@@ -4,13 +4,27 @@ using System.Windows.Automation;
 namespace BinanceUi.Tests.IntegrationTests;
 
 /// <summary>
-/// Automated UI test using Microsoft Automation.
-/// A (not so) good tool to see the Automation Element tree is https://accessibilityinsights.io/downloads/
+///     Automated UI test using Microsoft Automation.
+///     A (not so) good tool to see the Automation Element tree is https://accessibilityinsights.io/downloads/
 /// </summary>
 internal class AutomatedUiTests
 {
     private Process _binanceUiProcess;
     private AutomationElement _binanceUiRoot;
+    private MouseOperations.MousePoint _cursorPosition;
+
+    [OneTimeSetUp]
+    public void BeforeTests()
+    {
+        _cursorPosition = MouseOperations.GetCursorPosition();
+    }
+
+    [OneTimeTearDown]
+    public void AfterTests()
+    {
+        MouseOperations.SetCursorPosition(_cursorPosition);
+    }
+
 
     [SetUp]
     public void BeforeEveryTest()
