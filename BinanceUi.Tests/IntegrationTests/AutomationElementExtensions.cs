@@ -1,26 +1,22 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Windows.Automation;
 
 namespace BinanceUi.Tests.IntegrationTests;
 
 public static class AutomationElementExtensions
 {
-    public static AutomationElement GetDescendantWithAutomationProperty(this AutomationElement element, string automationPropertyValue)
+    public static AutomationElement GetDescendantWithAutomationProperty(this AutomationElement element, string automationPropertyValue, [CallerArgumentExpression(nameof(automationPropertyValue))] string expression = "")
     {
-        return element.Find(new PropertyCondition(AutomationElement.AutomationIdProperty, automationPropertyValue));
-    }
-
-    public static AutomationElement GetDescendantWithNameProperty(this AutomationElement element, string namePropertyValue)
-    {
-        return element.Find(new PropertyCondition(AutomationElement.NameProperty, namePropertyValue));
+        return element.Find(new PropertyCondition(AutomationElement.AutomationIdProperty, automationPropertyValue), expression);
     }
 
     public static AutomationElement FindWindow(this Process process)
     {
-        return AutomationElement.RootElement.Find(new PropertyCondition(AutomationElement.ProcessIdProperty, process.Id), TreeScope.Children);
+        return AutomationElement.RootElement.Find(new PropertyCondition(AutomationElement.ProcessIdProperty, process.Id), "Window", TreeScope.Children);
     }
 
-    public static AutomationElement Find(this AutomationElement element, PropertyCondition propertyCondition, TreeScope treeScope = TreeScope.Descendants)
+    public static AutomationElement Find(this AutomationElement element, PropertyCondition propertyCondition, string childName, TreeScope treeScope = TreeScope.Descendants)
     {
         var stopwatch = Stopwatch.StartNew();
         do
@@ -33,7 +29,7 @@ public static class AutomationElementExtensions
             Thread.Sleep(100);
         } while (stopwatch.ElapsedMilliseconds < 3000);
 
-        throw new Exception("Could not find child");
+        throw new Exception($"Could not find child {childName}");
     }
 
     public static void Invoke(this AutomationElement element)
@@ -44,7 +40,7 @@ public static class AutomationElementExtensions
 
     public static AutomationElement IntroduceDelayForLoading(this AutomationElement element)
     {
-        Thread.Sleep(3000);
+        Thread.Sleep(5000);
         return element;
     }
 
@@ -54,7 +50,10 @@ public static class AutomationElementExtensions
 
         if (itemContainerPattern == null) throw new Exception($"Expecting ItemContainerPattern at this point. Check {nameof(element.GetSupportedPatterns)}");
 
-        return itemContainerPattern.FindItemByProperty(null, AutomationProperty.LookupById(0), null);
+        var findItemByProperty = itemContainerPattern.FindItemByProperty(null, AutomationProperty.LookupById(0), null);
+
+        if (findItemByProperty == null) throw new Exception("No items found");
+        return findItemByProperty;
     }
 
     public static void OpenContextMenu(this AutomationElement automationElement)

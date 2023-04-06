@@ -32,9 +32,41 @@
         </ScrollViewer>
     </DataTemplate>
 
+    <converters:NullToMessageConverter NullValue="X" x:Key="NullToMessageConverter" />
+
+    <Style x:Key="Arrow" TargetType="{x:Type Path}">
+        <Setter Property="Data" Value="M 0 5 L 5 0 L 10 5 Z" />
+        <Setter Property="Width" Value="10" />
+        <Setter Property="Height" Value="5" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+    </Style>
+
+    <Style x:Key="Arrow.Up" TargetType="{x:Type Path}" BasedOn="{StaticResource Arrow}">
+        <Setter Property="Fill" Value="#00AA00" />
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="2" ScaleY="2" />
+                    <RotateTransform Angle="0" />
+                </TransformGroup>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Arrow.Down" TargetType="{x:Type Path}" BasedOn="{StaticResource Arrow}">
+        <Setter Property="Fill" Value="Red" />
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="2" ScaleY="2" />
+                    <RotateTransform Angle="180" />
+                </TransformGroup>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <DataTemplate DataType="{x:Type tickers:SymbolTickerViewModel}">
         <DataTemplate.Resources>
-            <converters:NullToMessageConverter NullValue="X" x:Key="NullToMessageConverter" />
 
             <Style x:Key="TextBlock.DisplayLabel" TargetType="{x:Type TextBlock}">
                 <Setter Property="HorizontalAlignment" Value="Center" />
@@ -48,37 +80,6 @@
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="Foreground" Value="{StaticResource Brush.White}" />
                 <Setter Property="Margin" Value="5,0,0,0" />
-            </Style>
-
-            <Style x:Key="Arrow" TargetType="{x:Type Path}">
-                <Setter Property="Data" Value="M 0 5 L 5 0 L 10 5 Z" />
-                <Setter Property="Width" Value="10" />
-                <Setter Property="Height" Value="5" />
-                <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-            </Style>
-
-            <Style x:Key="Arrow.Up" TargetType="{x:Type Path}" BasedOn="{StaticResource Arrow}">
-                <Setter Property="Fill" Value="#00AA00" />
-                <Setter Property="RenderTransform">
-                    <Setter.Value>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="2" ScaleY="2" />
-                            <RotateTransform Angle="0" />
-                        </TransformGroup>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
-            <Style x:Key="Arrow.Down" TargetType="{x:Type Path}" BasedOn="{StaticResource Arrow}">
-                <Setter Property="Fill" Value="Red" />
-                <Setter Property="RenderTransform">
-                    <Setter.Value>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="2" ScaleY="2" />
-                            <RotateTransform Angle="180" />
-                        </TransformGroup>
-                    </Setter.Value>
-                </Setter>
             </Style>
 
         </DataTemplate.Resources>
@@ -120,6 +121,20 @@
 
             </UniformGrid>
         </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tickers:SymbolTickerViewModel}" x:Key="SymbolTicker.Lite" x:Shared="False">
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding LastPrice, StringFormat={StaticResource PriceFormat}, Converter={StaticResource NullToMessageConverter}}"
+                       FontWeight="Bold"
+                       Margin="10,0"/>
+
+            <Path Style="{StaticResource Arrow.Down}"
+                  Visibility="{Binding IsUp, Converter={StaticResource BooleanToVisibilityConverter.Inverse}}" />
+            <Path Style="{StaticResource Arrow.Up}"
+                  Visibility="{Binding IsUp, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </StackPanel>
     </DataTemplate>
 
 </ResourceDictionary>

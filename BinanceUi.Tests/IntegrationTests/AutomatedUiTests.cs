@@ -68,6 +68,25 @@ internal class AutomatedUiTests
         Assert.That(newTab, Is.Not.Null);
     }
 
+    [Test(Description = "We are testing scenario where we open a Symbol order book from the SymbolInfo screen. It involves, opening Symbol Info, then right clicking on the second row to open menu item, then clicking it.")]
+    public void WhenWeOpenOrderBook()
+    {
+        var tradingInfoDataGridFirstItem = OpenTradingInfoTab()
+            .GetTradingInfoDataGrid()
+            .IntroduceDelayForLoading()
+            .GetFirstItem();
+
+        tradingInfoDataGridFirstItem.OpenContextMenu();
+
+        // get menu item
+        var priceTickerMenuItem = _binanceUiRoot.GetDescendantWithAutomationProperty("TradingPairInfo.GoToOrderBook");
+        priceTickerMenuItem.Invoke();
+
+        //  ASSERT
+        var newTab = _binanceUiRoot.GetDescendantWithAutomationProperty("OrderBook.Price");
+        Assert.That(newTab, Is.Not.Null);
+    }
+
     private AutomationElement GetTradingInfoDataGrid()
     {
         return _binanceUiRoot.GetDescendantWithAutomationProperty("TradingPairInfo.DataGrid");

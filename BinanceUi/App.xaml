@@ -7,6 +7,7 @@
 				<ResourceDictionary Source="pack://Application:,,,/BinanceUi;component/DefaultStyles.xaml" />
 				<ResourceDictionary Source="pack://Application:,,,/Screens/TradingPairs/TradingPairInfo.xaml" />
 				<ResourceDictionary Source="pack://Application:,,,/Screens/Tickers/SymbolTicker.xaml" />
+				<ResourceDictionary Source="pack://Application:,,,/Screens/OrderBooks/OrderBook.xaml" />
 			</ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

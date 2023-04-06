@@ -15,10 +15,10 @@ public class SymbolTickerViewModel : INotifyPropertyChanged, IDisposable
     private decimal? _lastPrice;
     private decimal? _quantity;
 
-    public SymbolTickerViewModel(SymbolTickerViewModelArguments arguments, BinanceService binanceService, SchedulerRepository schedulerRepository)
+    public SymbolTickerViewModel(SymbolItem arguments, BinanceService binanceService, SchedulerRepository schedulerRepository)
     {
         Symbol = arguments.Symbol;
-        DisplaySymbol = arguments.DisplaySymbol;
+        DisplaySymbol = arguments.GetDisplaySymbol();
 
         _subscription = binanceService
             .GetSymbolTicker(arguments.Symbol)

@@ -27,6 +27,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         AddTradingPairInfo = new DelegateCommand(OnAddTradingPairInfoExecute);
 
         newPageNavigator.AddSymbolTicker.Subscribe(OnAddSymbolTicker);
+        newPageNavigator.AddOrderBook.Subscribe(_items.Add);
     }
 
     public object? SelectedItem

@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Reactive.Concurrency;
 using BinanceUi.Screens;
+using BinanceUi.Screens.OrderBooks;
 using BinanceUi.Screens.Tickers;
 using BinanceUi.Screens.TradingPairs;
 using BinanceUi.Services;
@@ -48,7 +49,15 @@ public class DependencyInjectionContainer
         serviceProvider.AddSingleton<Func<SymbolTickersViewModel>>(t => t.GetRequiredService<SymbolTickersViewModel>);
 
         serviceProvider.AddSingleton<NewPageNavigator>();
-        serviceProvider.AddSingleton<Func<SymbolTickerViewModelArguments, SymbolTickerViewModel>>(provider => a => provider.ResolveWith<SymbolTickerViewModel>(a));
+        serviceProvider.AddSingleton<Func<SymbolItem, SymbolTickerViewModel>>(provider => a => provider.ResolveWith<SymbolTickerViewModel>(a));
+
+        RegisterOrderBook(serviceProvider);
+    }
+
+    private void RegisterOrderBook(ServiceCollection serviceProvider)
+    {
+        serviceProvider.AddSingleton<Func<OrderBookEntryViewModel.Parameters, OrderBookEntryViewModel>>(provider => a => provider.ResolveWith<OrderBookEntryViewModel>(a));
+        serviceProvider.AddSingleton<Func<SymbolItem, OrderBookViewModel>>(provider => a => provider.ResolveWith<OrderBookViewModel>(a, provider.ResolveWith<SymbolTickerViewModel>(a)));
     }
 
     public MainWindowViewModel GetViewModel() => _buildServiceProvider.GetRequiredService<MainWindowViewModel>();

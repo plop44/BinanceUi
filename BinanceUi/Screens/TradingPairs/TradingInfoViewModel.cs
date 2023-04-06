@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using BinanceUi.Screens.Tickers;
 using BinanceUi.Services;
 using BinanceUi.Various;
 
@@ -22,6 +21,7 @@ public class TradingInfoViewModel : INotifyPropertyChanged
         _binanceService = binanceService;
         _newPageNavigator = newPageNavigator;
         OpenPriceTicker = new DelegateCommand<TradingPairViewModel>(OnOpenPriceTickerExecute!, CanOpenPriceTickerExecute);
+        OpenOrderBook = new DelegateCommand<TradingPairViewModel>(CanOpenOrderBookExecute!, CanOpenPriceTickerExecute);
         Initialized = Init();
     }
 
@@ -29,6 +29,7 @@ public class TradingInfoViewModel : INotifyPropertyChanged
 
     public Task Initialized { get; }
     public ICommand OpenPriceTicker { get; }
+    public ICommand OpenOrderBook { get; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -39,7 +40,12 @@ public class TradingInfoViewModel : INotifyPropertyChanged
 
     private void OnOpenPriceTickerExecute(TradingPairViewModel tradingPairViewModel)
     {
-        _newPageNavigator.OpenPriceTracker(new SymbolTickerViewModelArguments(tradingPairViewModel.Symbol, tradingPairViewModel.DisplaySymbol));
+        _newPageNavigator.OpenPriceTracker(tradingPairViewModel.GetSymbolItem());
+    }
+
+    private void CanOpenOrderBookExecute(TradingPairViewModel tradingPairViewModel)
+    {
+        _newPageNavigator.OpenOrderBook(tradingPairViewModel.GetSymbolItem());
     }
 
     private async Task Init()
