@@ -13,6 +13,7 @@ namespace BinanceUi.Services;
 
 public class BinanceService
 {
+    // https://binance.github.io/binance-api-swagger/
     private const string ApiBaseUrl = "https://api.binance.com/api/v3";
     private readonly HttpClient _httpClient;
 
