@@ -1,6 +1,5 @@
-﻿# UnofficialBinanceDesktopAppForWindows
+﻿# Unofficial Binance desktop app for Windows
 
-Unofficial Binance desktop app for Windows.
 
 This app demonstrates a few WPF concepts, including:
 
@@ -9,7 +8,9 @@ This app demonstrates a few WPF concepts, including:
 - WPF Behaviors
 - use of ReactiveExtensions (Rx) in WPF
 
-![Binance UI render](https://raw.githubusercontent.com/plop44/UnofficialBinanceDesktopAppForWindows/main/Ticker.gif)
+![Binance UI render 1](https://raw.githubusercontent.com/plop44/UnofficialBinanceDesktopAppForWindows/main/Ticker.gif)
+
+![Binance UI render 2](https://raw.githubusercontent.com/plop44/UnofficialBinanceDesktopAppForWindows/main/OrderBook.gif)
 
 ## Automated UI Testing
 
