@@ -21,7 +21,7 @@ public class SymbolTickerViewModel : INotifyPropertyChanged, IDisposable
         DisplaySymbol = arguments.GetDisplaySymbol();
 
         _subscription = binanceService
-            .Get(arguments.Symbol)
+            .GetTicker(arguments.Symbol)
             .ObserveOn(schedulerRepository.SynchronizationContextScheduler)
             .Subscribe(t =>
             {

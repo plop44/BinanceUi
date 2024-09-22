@@ -21,7 +21,9 @@ public class BinanceWebsocketService
     private readonly ObservableLookup<string, TickerData> _tickerLookup;
     private readonly Subject<SubscriptionMessage> _tickerRequests = new();
     
-
+    private readonly ObservableLookup<string, AggTrade> _aggTradeLookup;
+    private readonly Subject<SubscriptionMessage> _aggTradeRequests = new();
+    
     private readonly JsonSerializerOptions _serializerOptions = new()
     {
         PropertyNameCaseInsensitive = false
@@ -31,9 +33,12 @@ public class BinanceWebsocketService
     {
         _tickerLookup = GetWebSocketObservable<TickerData>(_tickerRequests)
             .ToObservableLookup(t => t.Symbol, StringComparer.InvariantCultureIgnoreCase);
+
+        _aggTradeLookup = GetWebSocketObservable<AggTrade>(_aggTradeRequests)
+            .ToObservableLookup(t => t.Symbol, StringComparer.InvariantCultureIgnoreCase);
     }
 
-    public IObservable<TickerData> Get(string symbol)
+    public IObservable<TickerData> GetTicker(string symbol)
     {
         return Observable.Create<TickerData>(t =>
         {
@@ -46,6 +51,25 @@ public class BinanceWebsocketService
             _tickerRequests.OnNext(SubscriptionMessage.GetTickerSubscribe(symbol));
 
             var unsubscribe = Disposable.Create(() => _tickerRequests.OnNext(SubscriptionMessage.GetTickerUnsubscribe(symbol)));
+            compositeDisposable.Add(unsubscribe);
+
+            return compositeDisposable;
+        });
+    }
+
+    public IObservable<AggTrade> GetAggTrades(string symbol)
+    {
+        return Observable.Create<AggTrade>(t =>
+        {
+            var compositeDisposable = new CompositeDisposable();
+
+            _aggTradeLookup[symbol]
+                .Subscribe(t)
+                .DisposeWith(compositeDisposable);
+
+            _aggTradeRequests.OnNext(SubscriptionMessage.GetAggTradeSubscribe(symbol));
+
+            var unsubscribe = Disposable.Create(() => _aggTradeRequests.OnNext(SubscriptionMessage.GetAggTradeUnsubscribe(symbol)));
             compositeDisposable.Add(unsubscribe);
 
             return compositeDisposable;

@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:orderBooks="clr-namespace:BinanceUi.Screens.OrderBooks">
 
+    <orderBooks:DateTimeOffsetToLocalTimeConverter x:Key="DateTimeOffsetToLocalTimeConverter" />
 
     <DataTemplate x:Key="OrderBookViewModel.TabHeader" DataType="{x:Type orderBooks:OrderBookViewModel}">
         <TextBlock Text="{Binding DisplaySymbol, StringFormat='OB {0}'}" />
@@ -14,18 +15,33 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <ItemsControl ItemsSource="{Binding Asks}" Foreground="DarkRed"/>
-                <ContentControl Grid.Row="1"
-                                Content="{Binding SymbolTickerViewModel}"
-                                ContentTemplate="{StaticResource SymbolTicker.Lite}"
-                                HorizontalAlignment="Center"/>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding Bids}" Foreground="DarkGreen" />
+                <StackPanel Orientation="Vertical" x:Name="StackPanel">
+                    <ItemsControl ItemsSource="{Binding Asks}" Foreground="DarkRed" />
+                    <ContentControl
+                        Content="{Binding SymbolTickerViewModel}"
+                        ContentTemplate="{StaticResource SymbolTicker.Lite}"
+                        HorizontalAlignment="Center" />
+                    <ItemsControl
+                        ItemsSource="{Binding Bids}" Foreground="DarkGreen" />
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="0" Grid.Column="1" MaxHeight="{Binding ElementName=StackPanel, Path=ActualHeight}">
+                    <DataGrid
+                        Margin="16,0,0,0"
+                        ItemsSource="{Binding Trades}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Trade Time"
+                                                Binding="{Binding TradeTime, StringFormat={}{0:HH:mm:ss.ffff}, Converter={StaticResource DateTimeOffsetToLocalTimeConverter}}" />
+                            <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:N8}}" />
+                            <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ScrollViewer>
             </Grid>
         </ScrollViewer>
     </DataTemplate>
@@ -34,8 +50,8 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding Price, StringFormat={StaticResource PriceFormat}}"
                        Margin="20,0"
-                       MinWidth="100" 
-                       AutomationProperties.AutomationId="OrderBook.Price"/>
+                       MinWidth="100"
+                       AutomationProperties.AutomationId="OrderBook.Price" />
             <TextBlock Text="{Binding Quantity}" />
         </StackPanel>
     </DataTemplate>

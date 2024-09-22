@@ -20,12 +20,12 @@ internal class BinanceWebsocketServiceTests
     {
         var taskCompletionSource = new TaskCompletionSource();
         
-        _itemUnderTests.Get("BTCUSDT")
+        _itemUnderTests.GetTicker("BTCUSDT")
             .Take(5)
             .Materialize()
             .Subscribe(notification => Console.WriteLine($"A => {notification}"));
 
-        _itemUnderTests.Get("ETHBTC")
+        _itemUnderTests.GetTicker("ETHBTC")
             .Take(5)
             .Materialize()
             .Subscribe(notification => Console.WriteLine($"B => {notification}"), () => taskCompletionSource.SetResult());
@@ -38,12 +38,12 @@ internal class BinanceWebsocketServiceTests
     {
         var taskCompletionSource = new TaskCompletionSource();
         
-        _itemUnderTests.Get("BTCUSDT")
+        _itemUnderTests.GetTicker("BTCUSDT")
             .Take(1)
             .Materialize()
             .Subscribe(notification => Console.WriteLine($"A => {notification}"));
 
-        _itemUnderTests.Get("BTCUSDT")
+        _itemUnderTests.GetTicker("BTCUSDT")
             .Take(5)
             .Materialize()
             .Subscribe(notification => Console.WriteLine($"B => {notification}"), () => taskCompletionSource.SetResult());
@@ -72,7 +72,7 @@ internal class BinanceWebsocketServiceTests
         {
             var taskCompletionSource = new TaskCompletionSource();
 
-            _itemUnderTests.Get(symbol)
+            _itemUnderTests.GetTicker(symbol)
                 .Take(1)
                 .Materialize()
                 .Subscribe(notification => Console.WriteLine($"{notification}"), () => taskCompletionSource.SetResult());
