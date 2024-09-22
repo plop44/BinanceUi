@@ -19,13 +19,14 @@ public class OrderBookViewModel : IDisposable, INotifyPropertyChanged
     private readonly IDisposable _subscription;
 
     public OrderBookViewModel(SymbolItem symbolItem, BinanceService binanceService, SchedulerRepository schedulerRepository,
-        Func<OrderBookEntryViewModel.Parameters, OrderBookEntryViewModel> factory, SymbolTickerViewModel symbolTickerViewModel)
+        Func<OrderBookEntryViewModel.Parameters, OrderBookEntryViewModel> factory, SymbolTickerViewModel symbolTickerViewModel,
+        BinanceWebsocketService binanceWebsocketService)
     {
         DisplaySymbol = symbolItem.GetDisplaySymbol();
         SymbolTickerViewModel = symbolTickerViewModel;
 
         _subscription = binanceService.GetOrderBookSnapshot(symbolItem.Symbol, OrderBookDepthNumber).ToObservable()
-            .Concat(binanceService.GetOrderBookUpdates(symbolItem.Symbol, OrderBookDepth))
+            .Concat(binanceWebsocketService.GetOrderBookUpdates(symbolItem.Symbol, OrderBookDepth))
             .ObserveOn(schedulerRepository.SynchronizationContextScheduler)
             .Subscribe(t =>
             {

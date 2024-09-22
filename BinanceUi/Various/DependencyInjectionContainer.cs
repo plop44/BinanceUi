@@ -40,6 +40,7 @@ public class DependencyInjectionContainer
         serviceProvider.AddSingleton<HttpClient>();
         serviceProvider.AddSingleton<MainWindowViewModel>();
         serviceProvider.AddSingleton<BinanceService>();
+        serviceProvider.AddSingleton<BinanceWebsocketService>();
 
         serviceProvider.AddTransient<TradingInfoViewModel>();
         serviceProvider.AddTransient<SymbolTickersViewModel>();
