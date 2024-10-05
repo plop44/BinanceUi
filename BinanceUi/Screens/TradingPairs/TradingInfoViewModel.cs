@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
@@ -20,8 +21,8 @@ public class TradingInfoViewModel : INotifyPropertyChanged
     {
         _binanceService = binanceService;
         _newPageNavigator = newPageNavigator;
-        OpenPriceTicker = new DelegateCommand<TradingPairViewModel>(OnOpenPriceTickerExecute!, CanOpenPriceTickerExecute);
-        OpenOrderBook = new DelegateCommand<TradingPairViewModel>(CanOpenOrderBookExecute!, CanOpenPriceTickerExecute);
+        OpenPriceTicker = new DelegateCommand<IList>(OnOpenPriceTickerExecute, CanOpenPriceTickerExecute);
+        OpenOrderBook = new DelegateCommand<IList>(CanOpenOrderBookExecute, CanOpenPriceTickerExecute);
         Initialized = Init();
     }
 
@@ -33,19 +34,35 @@ public class TradingInfoViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private bool CanOpenPriceTickerExecute(TradingPairViewModel? tradingPairViewModel)
+    private bool CanOpenPriceTickerExecute(IList? tradingPairViewModels)
     {
-        return tradingPairViewModel != null;
+        return tradingPairViewModels?.Count > 0;
     }
 
-    private void OnOpenPriceTickerExecute(TradingPairViewModel tradingPairViewModel)
+    private void OnOpenPriceTickerExecute(IList? tradingPairViewModels)
     {
-        _newPageNavigator.OpenPriceTracker(tradingPairViewModel.GetSymbolItem());
+        var pairViewModels = tradingPairViewModels?.OfType<TradingPairViewModel>();
+
+        if(pairViewModels == null)
+            return;
+
+        foreach (var tradingPairViewModel in pairViewModels)
+        {
+            _newPageNavigator.OpenPriceTracker(tradingPairViewModel.GetSymbolItem());
+        }
     }
 
-    private void CanOpenOrderBookExecute(TradingPairViewModel tradingPairViewModel)
+    private void CanOpenOrderBookExecute(IList? tradingPairViewModels)
     {
-        _newPageNavigator.OpenOrderBook(tradingPairViewModel.GetSymbolItem());
+        var pairViewModels = tradingPairViewModels?.OfType<TradingPairViewModel>();
+
+        if (pairViewModels == null)
+            return;
+
+        foreach (var tradingPairViewModel in pairViewModels)
+        {
+            _newPageNavigator.OpenOrderBook(tradingPairViewModel.GetSymbolItem());
+        }
     }
 
     private async Task Init()
